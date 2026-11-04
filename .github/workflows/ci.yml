@@ -108,7 +108,7 @@ jobs:
           done
       - name: Trivy image scan (fail on HIGH/CRITICAL)
         if: hashFiles('services/api/Dockerfile') != ''
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: resto-radar-api:ci
           severity: HIGH,CRITICAL
