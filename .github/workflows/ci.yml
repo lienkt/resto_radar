@@ -45,7 +45,7 @@ jobs:
         working-directory: .
         run: |
           if [ -f "services/${{ matrix.service }}/pyproject.toml" ]; then echo "yes=true" >> "$GITHUB_OUTPUT"; else echo "yes=false" >> "$GITHUB_OUTPUT"; fi
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         if: steps.exists.outputs.yes == 'true'
       - if: steps.exists.outputs.yes == 'true'
         run: uv sync --frozen
