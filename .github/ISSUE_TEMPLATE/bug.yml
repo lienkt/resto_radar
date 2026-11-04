@@ -1,0 +1,32 @@
+name: Bug
+description: Something is broken
+title: "[Bug] "
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: steps
+    attributes: {label: Steps to reproduce}
+    validations: {required: true}
+  - type: textarea
+    id: expected
+    attributes: {label: Expected}
+    validations: {required: true}
+  - type: textarea
+    id: actual
+    attributes: {label: Actual (logs, screenshots, Sentry link — no personal data or secrets)}
+    validations: {required: true}
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options: ["S1 – outage / data or security issue", "S2 – major feature broken", "S3 – minor", "S4 – cosmetic"]
+    validations: {required: true}
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options: [api, workers, radar, web, mobile, infra, harness]
+  - type: input
+    id: story
+    attributes: {label: Related story, placeholder: "#12"}

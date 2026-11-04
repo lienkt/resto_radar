@@ -1,0 +1,34 @@
+# Replace the placeholder teams/handles with real ones (scripts/setup-github.sh explains how).
+# Later rules override earlier ones. Branch protection requires a code-owner review.
+#   @PO         = product owner (Nhan)
+#   @TECH-LEAD  = tech lead
+#   @team-*     = GitHub teams (or individual @handles in a small team)
+
+*                                   @TECH-LEAD
+
+# Product & docs
+/docs/SPEC.md                       @PO @TECH-LEAD
+/config/sources.*.yaml              @PO @team-radar
+/config/scoring.yaml                @PO @team-radar
+
+# Code areas
+/services/api/                      @team-backend
+/services/workers/                  @team-backend
+/services/workers/**/radar/         @team-radar
+/apps/web/                          @team-web
+/apps/mobile/                       @team-mobile
+/packages/                          @team-web @team-mobile
+/packages/api-client/               @team-backend @team-web @team-mobile
+
+# Critical areas — always the tech lead (2-approval rule in docs/TEAM.md)
+/services/api/app/auth/             @TECH-LEAD
+/services/workers/**/crawl*/        @TECH-LEAD
+/services/workers/**/llm/           @TECH-LEAD
+/infra/                             @TECH-LEAD
+/.github/                           @TECH-LEAD
+/.claude/                           @TECH-LEAD
+/.mcp.json                          @TECH-LEAD
+/.pre-commit-config.yaml            @TECH-LEAD
+/CLAUDE.md                          @TECH-LEAD
+/docs/SECURITY.md                   @TECH-LEAD @PO
+/docs/TEAM.md                       @TECH-LEAD @PO

@@ -1,0 +1,19 @@
+name: Architecture decision (ADR)
+description: A decision that needs discussion before an ADR is merged in docs/adr/
+title: "[ADR] "
+labels: ["type:adr", "mode:human-led"]
+body:
+  - type: textarea
+    id: context
+    attributes: {label: Context — what problem, what constraints}
+    validations: {required: true}
+  - type: textarea
+    id: options
+    attributes: {label: Options considered (with cost, terms, risks)}
+    validations: {required: true}
+  - type: textarea
+    id: proposal
+    attributes: {label: Proposed decision and consequences}
+  - type: input
+    id: deadline
+    attributes: {label: Decide by, placeholder: "2026-11-20"}

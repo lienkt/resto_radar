@@ -1,0 +1,40 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Claude Code personal settings
+.claude/settings.local.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Node / Expo / Next
+node_modules/
+.next/
+.turbo/
+dist/
+build/
+.expo/
+web-build/
+*.tsbuildinfo
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Agent planning scratch
+.plan/

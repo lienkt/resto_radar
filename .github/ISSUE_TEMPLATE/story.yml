@@ -1,0 +1,55 @@
+name: Story
+description: A user-facing feature or technical story (≈ one PR)
+title: "[Story] "
+labels: ["type:story"]
+body:
+  - type: input
+    id: milestone
+    attributes: {label: Milestone, placeholder: "M2"}
+    validations: {required: true}
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      placeholder: "As a restaurant owner, I want … so that …"
+    validations: {required: true}
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Given / When / Then. QA tests these literally. Include FR/NL/EN and web/mobile where relevant.
+      placeholder: |
+        - Given … When … Then …
+    validations: {required: true}
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options: [api, workers, radar, web, mobile, infra, harness]
+    validations: {required: true}
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Work mode
+      description: See docs/TEAM.md §2
+      options: [agent-heavy, human-led, human-only]
+    validations: {required: true}
+  - type: dropdown
+    id: size
+    attributes: {label: Size, options: [S, M, L]}
+    validations: {required: true}
+  - type: textarea
+    id: contract
+    attributes:
+      label: Contract / design references
+      description: OpenAPI operations, ADRs, designs this story builds on
+  - type: textarea
+    id: deps
+    attributes: {label: Dependencies, placeholder: "Blocked by #… · Blocks #…"}
+  - type: checkboxes
+    id: flags
+    attributes:
+      label: Review needs
+      options:
+        - label: Touches auth, crawling, personal data, LLM prompts, infra or harness → needs-security-review + 2 approvals

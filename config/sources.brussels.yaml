@@ -1,0 +1,139 @@
+# Innovation Radar — seed sources for the Brussels pilot.
+# status: "to_verify" = radar-engineer must confirm the feed/API URL, terms of use and
+# robots.txt before enabling. Never enable a source without admin approval.
+# authority: 0–1, used in the confidence term of the value score.
+
+region: be-bru
+languages: [fr, nl, en]
+
+sources:
+  # ---------- Laws & regulations ----------
+  - name: Moniteur belge / Belgisch Staatsblad
+    url: https://www.ejustice.just.fgov.be
+    category: law
+    kind: html            # check for an official feed/API first
+    authority: 1.0
+    status: to_verify
+  - name: EUR-Lex (EU legislation – food, hygiene, labelling, packaging)
+    url: https://eur-lex.europa.eu
+    category: law
+    kind: rss
+    authority: 1.0
+    status: to_verify
+  - name: AFSCA / FAVV – federal food safety agency (news, sector guidance)
+    url: https://www.favv-afsca.be
+    category: regulation_change
+    kind: html
+    authority: 1.0
+    status: to_verify
+  - name: SPF Économie / FOD Economie – horeca rules, prices, consumer law
+    url: https://economie.fgov.be
+    category: regulation_change
+    kind: html
+    authority: 0.95
+    status: to_verify
+  - name: SPF Finances – VAT and the cash register (GKS/SCE) obligations for horeca
+    url: https://finances.belgium.be
+    category: regulation_change
+    kind: html
+    authority: 0.95
+    status: to_verify
+  - name: Bruxelles Environnement / Leefmilieu Brussel – waste, packaging, energy rules
+    url: https://environnement.brussels
+    category: regulation_change
+    kind: html
+    authority: 0.95
+    status: to_verify
+
+  # ---------- Grants & support ----------
+  - name: hub.brussels – support and calls for Brussels businesses
+    url: https://hub.brussels
+    category: grant
+    kind: html
+    authority: 0.9
+    status: to_verify
+  - name: 1819.brussels – entrepreneur info and aid overview
+    url: https://1819.brussels
+    category: grant
+    kind: html
+    authority: 0.9
+    status: to_verify
+  - name: Good Food Brussels strategy (sustainable food initiatives)
+    url: https://goodfood.brussels
+    category: grant
+    kind: html
+    authority: 0.85
+    status: to_verify
+
+  # ---------- Sector federations & news ----------
+  - name: Fédération Horeca Bruxelles
+    url: https://www.horecabruxelles.be
+    category: news
+    kind: html
+    authority: 0.8
+    status: to_verify
+  - name: Horeca Vlaanderen (national sector news, NL)
+    url: https://www.horecavlaanderen.be
+    category: news
+    kind: html
+    authority: 0.8
+    status: to_verify
+
+  # ---------- Courses & training ----------
+  - name: Horeca Forma (sector training fund, Brussels)
+    url: https://www.horecaforma.be
+    category: course
+    kind: html
+    authority: 0.85
+    status: to_verify
+  - name: Bruxelles Formation
+    url: https://www.bruxellesformation.brussels
+    category: course
+    kind: html
+    authority: 0.85
+    status: to_verify
+  - name: Syntra Brussel
+    url: https://www.syntrabrussel.be
+    category: course
+    kind: html
+    authority: 0.8
+    status: to_verify
+
+  # ---------- Events & fairs ----------
+  - name: visit.brussels agenda (food events, festivals)
+    url: https://www.visit.brussels
+    category: event
+    kind: html
+    authority: 0.75
+    status: to_verify
+  - name: Horeca Expo (Ghent trade fair)
+    url: https://www.horecaexpo.be
+    category: event
+    kind: html
+    authority: 0.75
+    status: to_verify
+  - name: Eventbrite API – food & drink business events in Brussels
+    url: https://www.eventbrite.com/platform/api
+    category: event
+    kind: api             # needs API key; check current API capabilities/terms
+    authority: 0.6
+    status: to_verify
+
+  # ---------- EU-level news ----------
+  - name: EFSA news (food safety science, upcoming EU rules)
+    url: https://www.efsa.europa.eu
+    category: news
+    kind: rss
+    authority: 0.9
+    status: to_verify
+
+discovery:
+  enabled: true
+  schedule: weekly
+  seed_queries:
+    - "subside horeca Bruxelles"
+    - "premie horeca Brussel"
+    - "nouvelle réglementation restaurant Belgique"
+    - "formation restauration Bruxelles"
+    - "salon horeca Belgique 2027"
+  auto_enable: false      # proposals always go to the admin review queue

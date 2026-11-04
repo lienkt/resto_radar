@@ -1,0 +1,29 @@
+# Innovation Radar scoring weights (tunable without deploys). See docs/ARCHITECTURE.md.
+relevance:
+  embedding_weight: 0.6
+  rule_weight: 0.4
+  rule_boosts:            # each adds to the rule term (clamped to 1.0)
+    same_region: 0.4
+    venue_type_match: 0.3
+    goal_match: 0.3
+    cuisine_keyword: 0.2
+
+value:
+  weights:
+    impact: 0.40
+    low_cost: 0.20
+    low_effort: 0.15
+    urgency: 0.25
+  impact_bands: {low: 0.25, medium: 0.5, high: 0.75, very_high: 1.0}
+  urgency:
+    full_at_days: 14      # deadline within 14 days → urgency 1.0
+    zero_at_days: 180     # beyond 180 days → 0
+
+rings:
+  act_now: {min_value: 70, max_deadline_days: 60}
+  plan: {min_value: 45}
+  mandatory_always_act_now: true
+
+notifications:
+  default_change_threshold: 0.5   # competitor change significance (0–1)
+  radar_push_min_value: 75

@@ -1,0 +1,116 @@
+# Quality gate for every PR and push to main.
+# Jobs skip themselves until the code they test exists (the repo starts as a kit).
+# devops-engineer: pin each third-party action to a full commit SHA (Dependabot keeps them updated).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api, workers]
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: resto_radar_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+    defaults:
+      run:
+        working-directory: services/${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check service exists
+        id: exists
+        working-directory: .
+        run: |
+          if [ -f "services/${{ matrix.service }}/pyproject.toml" ]; then echo "yes=true" >> "$GITHUB_OUTPUT"; else echo "yes=false" >> "$GITHUB_OUTPUT"; fi
+      - uses: astral-sh/setup-uv@v6
+        if: steps.exists.outputs.yes == 'true'
+      - if: steps.exists.outputs.yes == 'true'
+        run: uv sync --frozen
+      - name: Lint & format
+        if: steps.exists.outputs.yes == 'true'
+        run: uv run ruff check . && uv run ruff format --check .
+      - name: Type check
+        if: steps.exists.outputs.yes == 'true'
+        run: uv run mypy .
+      - name: Tests with coverage (≥ 80%)
+        if: steps.exists.outputs.yes == 'true'
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/resto_radar_test
+          REDIS_URL: redis://localhost:6379/0
+        run: uv run pytest --cov --cov-report=xml --cov-fail-under=80
+      - name: Bandit (Python security lint)
+        if: steps.exists.outputs.yes == 'true'
+        run: uvx bandit -r . -x ./tests -q
+      - name: pip-audit (known vulnerable dependencies)
+        if: steps.exists.outputs.yes == 'true'
+        run: uv export --frozen --no-hashes > /tmp/req.txt && uvx pip-audit -r /tmp/req.txt
+
+  node:
+    name: Web, mobile & packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check workspace exists
+        id: exists
+        run: |
+          if [ -f package.json ]; then echo "yes=true" >> "$GITHUB_OUTPUT"; else echo "yes=false" >> "$GITHUB_OUTPUT"; fi
+      - uses: pnpm/action-setup@v4
+        if: steps.exists.outputs.yes == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.exists.outputs.yes == 'true'
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - if: steps.exists.outputs.yes == 'true'
+        run: pnpm install --frozen-lockfile
+      - if: steps.exists.outputs.yes == 'true'
+        run: pnpm turbo run lint typecheck test build
+      - name: OpenAPI client is up to date
+        if: steps.exists.outputs.yes == 'true' && hashFiles('packages/api-client/package.json') != ''
+        run: pnpm --filter api-client generate && git diff --exit-code packages/api-client
+      - name: Audit dependencies
+        if: steps.exists.outputs.yes == 'true'
+        run: pnpm audit --audit-level high
+
+  docker:
+    name: Build & scan images
+    runs-on: ubuntu-latest
+    needs: [python]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build images that exist
+        run: |
+          for svc in api workers; do
+            if [ -f "services/$svc/Dockerfile" ]; then docker build -t "resto-radar-$svc:ci" "services/$svc"; fi
+          done
+      - name: Trivy image scan (fail on HIGH/CRITICAL)
+        if: hashFiles('services/api/Dockerfile') != ''
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: resto-radar-api:ci
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
