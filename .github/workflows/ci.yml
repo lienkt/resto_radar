@@ -77,7 +77,7 @@ jobs:
         id: exists
         run: |
           if [ -f package.json ]; then echo "yes=true" >> "$GITHUB_OUTPUT"; else echo "yes=false" >> "$GITHUB_OUTPUT"; fi
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v5
         if: steps.exists.outputs.yes == 'true'
       - uses: actions/setup-node@v4
         if: steps.exists.outputs.yes == 'true'
